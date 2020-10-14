@@ -1,0 +1,12 @@
+{% extends 'wrapper.html' %}
+{% load crispy_forms_tags %}
+{% block body %}
+    <div class="container pt-3">
+        <h1>Регистрация</h1>
+        <form action="{% url 'registration' %}" method="post">
+            {% crispy form %}
+        </form>
+        <a href="{% url 'login' %}" class="btn btn-outline-primary">У меня есть аккаунт</a>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'wrapper.html' %}
+{% block body %}
+    <div class="container">
+        <div class="row">
+            {% if request.user.is_authenticated %}
+                {% if request.user.account.active %}
+                    {% if request.user.account.referrer_fk %}
+                        <div class="col-12 mt-4 mb-4">
+                            <h2>Мой реферер</h2>
+                            <div class="input-group mb-3">
+                                <h4>{{ request.user.account.referrer_fk.user_fk.username }}</h4>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="col-12 mb-4 mt-4">
+                        <h2>Мой реферальный код</h2>
+                        <div class="input-group mb-3">
+                            <form action="{% url 'generate_referral_code' %}" method="post">
+                                {% csrf_token %}
+                                <input disabled type="text" class="form-control" placeholder="" value="{{ request.user.account.referral_code }}" aria-describedby="button-addon1">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-outline-secondary" type="submit" id="button-addon1">Сгенерировать новый реферальный код</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+            <div class="col-6">
+                <h2>Рейтинг топ 10</h2>
+                <table class="table">
+                    <tr>
+                        <th>#</th>
+                        <th>никнейм</th>
+                        <th>к-во баллов</th>
+                    </tr>
+                    {% for u in top_table %}
+                        <tr>
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
+                            <td>
+                                {{ u.user_fk.username }}
+                            </td>
+                            <td>
+                                {{ u.points }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            {% if request.user.is_authenticated %}
+                <div class="col-6 mb-4">
+
+                    {% if referrals %}
+                        <h2>Мои рефералы</h2>
+                        <table class="table">
+                            <tr>
+                                <th>#</th>
+                                <th>никнейм</th>
+                                <th>к-во баллов</th>
+                            </tr>
+                            {% for u in referrals %}
+                                <tr>
+                                    <td>
+                                        {{ forloop.counter }}
+                                    </td>
+                                    <td>
+                                        {{ u.user_fk.username }}
+                                    </td>
+                                    <td>
+                                        {{ u.points }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% else %}
+                        <h4>У вас еще нету рефералов</h4>
+                    {% endif %}
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn-primary btn">Login</a>
+                    <a href="{% url 'registration' %}" class="btn-primary btn">Registration</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
